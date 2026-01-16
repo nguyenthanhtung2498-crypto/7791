@@ -8,7 +8,7 @@ import { Lesson, SetupInfo } from '../types';
 class GeminiService {
   private getAI() {
     // Ưu tiên lấy API Key từ môi trường Vercel, nếu không có sẽ lấy giá trị rỗng thay vì làm ứng dụng bị crash
-    const apiKey = (typeof process !== 'undefined' && process.env?.API_KEY) || '';
+    const apiKey = (typeof process !== 'undefined' && process.env?.GEMINI_API_KEY) || '';
     return new GoogleGenAI({ apiKey: apiKey });
   }
 
