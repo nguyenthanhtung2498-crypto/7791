@@ -1,0 +1,8 @@
+{
+  "name": "Ma trận Đề thi CV 7791",
+  "description": "Ứng dụng chuyên nghiệp để tạo và quản lý ma trận đề thi theo tiêu chuẩn công văn 7791 của Bộ Giáo dục và Đào tạo.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
