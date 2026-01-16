@@ -4,12 +4,12 @@ import { Lesson, SetupInfo } from '../types';
 
 /**
  * GeminiService: Lớp dịch vụ xử lý các tương tác với Google Gemini API.
- * Tuân thủ hướng dẫn: Sử dụng process.env.API_KEY và các model Gemini 3.
+ * Tuân thủ hướng dẫn: Sử dụng process.env.GEMINI_API_KEY và các model Gemini 3.
  */
 class GeminiService {
   private getAI() {
     // Luôn lấy API Key từ môi trường (được Vercel/System cấu hình)
-    return new GoogleGenAI({ apiKey: process.env.API_KEY as string });
+    return new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY as string });
   }
 
   /**
