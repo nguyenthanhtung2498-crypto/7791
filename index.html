@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="vi">
   <head>
@@ -31,14 +30,9 @@
         padding-left: 20px;
       }
     </style>
-    <script>
-      // Shim để tránh lỗi "process is not defined" trong trình duyệt
-      window.process = { env: { API_KEY: '' } };
-   
-</head>
+  </head>
   <body>
     <div id="root"></div>
-    <!-- Thêm thẻ nạp module chính của ứng dụng -->
-    <script type="module" src="./index.tsx"></script>
+    <script type="module" src="/index.tsx"></script>
   </body>
 </html>
