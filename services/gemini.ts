@@ -4,12 +4,12 @@ import { Lesson, SetupInfo } from '../types';
 
 /**
  * GeminiService: Lớp dịch vụ xử lý các tương tác với Google Gemini API.
- * Tuân thủ hướng dẫn: Sử dụng process.env.GEMINI_API_KEY và các model Gemini 3.
  */
 class GeminiService {
   private getAI() {
-    // Luôn lấy API Key từ môi trường (được Vercel/System cấu hình)
-    return new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY as string });
+    // Ưu tiên lấy API Key từ môi trường Vercel, nếu không có sẽ lấy giá trị rỗng thay vì làm ứng dụng bị crash
+    const apiKey = (typeof process !== 'undefined' && process.env?.API_KEY) || '';
+    return new GoogleGenAI({ apiKey: apiKey });
   }
 
   /**
@@ -30,7 +30,7 @@ class GeminiService {
 
     try {
       const response = await ai.models.generateContent({
-        model: 'gemini-3-flash-preview', // Flash phù hợp cho việc trích xuất thông tin nhanh
+        model: 'gemini-3-flash-preview',
         contents: prompt,
         config: {
           responseMimeType: "application/json",
@@ -58,7 +58,7 @@ class GeminiService {
       }));
     } catch (error) {
       console.error('Gemini analyzeSyllabus Error:', error);
-      throw new Error('Không thể phân tích Phụ lục III. Vui lòng kiểm tra định dạng file.');
+      throw new Error('Không thể phân tích Phụ lục III. Vui lòng kiểm tra định dạng file và API Key.');
     }
   }
 
@@ -83,7 +83,7 @@ class GeminiService {
 
     try {
       const response = await ai.models.generateContent({
-        model: 'gemini-3-pro-preview', // Pro cho các tác vụ suy luận/tính toán phức tạp
+        model: 'gemini-3-pro-preview',
         contents: prompt,
         config: {
           responseMimeType: "application/json",
@@ -107,7 +107,7 @@ class GeminiService {
       return JSON.parse(response.text || '[]');
     } catch (error) {
       console.error('Gemini suggestMatrix Error:', error);
-      throw new Error('Lỗi khi AI tính toán ma trận. Vui lòng thử lại.');
+      throw new Error('Lỗi khi AI tính toán ma trận. Vui lòng kiểm tra API Key.');
     }
   }
 }
