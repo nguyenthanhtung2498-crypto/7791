@@ -18,8 +18,8 @@ const SetupStep: React.FC<SetupStepProps> = ({ onComplete }) => {
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (!file || !subject || !grade) {
-      if (!subject || !grade) alert("Vui lòng chọn Môn và Khối trước khi tải file.");
+    if (!file || !subject || !grade || !examType) {
+      if (!subject || !grade || !examType) alert("Vui lòng chọn Môn, Khối và Kỳ thi trước khi tải file để AI lọc bài chính xác.");
       return;
     }
     
@@ -32,7 +32,13 @@ const SetupStep: React.FC<SetupStepProps> = ({ onComplete }) => {
       const result = await window.mammoth.extractRawText({ arrayBuffer });
       const text = result.value;
 
-      const parsedLessons = await geminiService.analyzeSyllabus(text, subject, grade);
+      // Truyền thêm examType để AI biết phạm vi tuần cần lấy
+      const parsedLessons = await geminiService.analyzeSyllabus(text, subject, grade, examType);
+      
+      if (parsedLessons.length === 0) {
+        alert("AI không tìm thấy bài học nào phù hợp trong phạm vi kỳ thi này. Vui lòng kiểm tra lại nội dung file.");
+      }
+      
       setLessons(parsedLessons);
     } catch (error: any) {
       alert(error.message || "Lỗi khi xử lý tài liệu.");
@@ -77,7 +83,11 @@ const SetupStep: React.FC<SetupStepProps> = ({ onComplete }) => {
           <select 
             className="w-full bg-white border border-[#e2e8f0] rounded-lg p-3 outline-none focus:ring-2 focus:ring-[#0d9488]"
             value={examType}
-            onChange={(e) => setExamType(e.target.value)}
+            onChange={(e) => {
+                setExamType(e.target.value);
+                setLessons([]); // Reset danh sách bài khi đổi kỳ thi
+                setFileName('');
+            }}
           >
             <option value="">-- Kỳ thi --</option>
             {EXAM_TYPES.map(t => <option key={t.id} value={t.name}>{t.name}</option>)}
@@ -99,15 +109,18 @@ const SetupStep: React.FC<SetupStepProps> = ({ onComplete }) => {
           </div>
           <div>
             <p className="text-lg font-bold text-[#1e293b]">{fileName || 'Tải lên Phụ lục III (File Word)'}</p>
-            <p className="text-sm text-[#64748b]">Kéo thả hoặc nhấp để chọn file .docx</p>
+            <p className="text-sm text-[#64748b]">AI sẽ tự lọc bài học theo kỳ thi đã chọn bên trên</p>
           </div>
         </label>
       </div>
 
       {isAnalyzing && (
-        <div className="flex items-center justify-center gap-3 p-8 bg-white rounded-xl border border-[#e2e8f0] shadow-sm animate-pulse">
-          <Loader2 className="animate-spin text-[#0d9488]" />
-          <span className="font-medium text-[#1e293b]">AI đang đọc và trích xuất danh sách bài học...</span>
+        <div className="flex flex-col items-center justify-center gap-4 p-12 bg-white rounded-xl border border-[#e2e8f0] shadow-sm">
+          <Loader2 className="animate-spin text-[#0d9488] w-10 h-10" />
+          <div className="text-center">
+            <p className="font-bold text-[#1e293b]">AI đang phân tích và lọc bài học...</p>
+            <p className="text-xs text-[#64748b]">Đang loại bỏ các tiết ôn tập và kiểm tra trong phạm vi {examType}</p>
+          </div>
         </div>
       )}
 
@@ -116,9 +129,9 @@ const SetupStep: React.FC<SetupStepProps> = ({ onComplete }) => {
           <div className="flex items-center justify-between">
             <h3 className="text-lg font-bold text-[#1e293b] flex items-center gap-2">
               <Sparkles className="text-amber-500" size={20} />
-              Danh mục bài học AI đã trích xuất
+              Danh mục bài học AI đã lọc ({examType})
             </h3>
-            <span className="text-sm text-[#64748b]">Tích chọn các bài sẽ đưa vào ma trận đề</span>
+            <span className="text-sm text-[#64748b]">Đã tự động loại bỏ các tiết ôn tập & đánh giá</span>
           </div>
 
           <div className="bg-white border border-[#e2e8f0] rounded-xl overflow-hidden shadow-sm">
@@ -129,7 +142,7 @@ const SetupStep: React.FC<SetupStepProps> = ({ onComplete }) => {
                     <th className="p-4 w-10"></th>
                     <th className="p-4 text-xs font-bold text-[#64748b] uppercase">Tuần</th>
                     <th className="p-4 text-xs font-bold text-[#64748b] uppercase">Tiết</th>
-                    <th className="p-4 text-xs font-bold text-[#64748b] uppercase">Bài học</th>
+                    <th className="p-4 text-xs font-bold text-[#64748b] uppercase">Bài học (Kiến thức mới)</th>
                     <th className="p-4 text-xs font-bold text-[#64748b] uppercase">Chủ đề</th>
                   </tr>
                 </thead>

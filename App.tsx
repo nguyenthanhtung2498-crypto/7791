@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import Login from './components/Login';
 import Dashboard from './components/Dashboard';
-import { User, AppStep, Lesson, SetupInfo } from './types';
+import { User, AppStep, Lesson, SetupInfo, UserRole } from './types';
 
 const App: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -40,8 +40,8 @@ const App: React.FC = () => {
       .catch(() => setIp('27.74.132.60'));
   }, []);
 
-  const handleLogin = (username: string) => {
-    setUser({ username, ip });
+  const handleLogin = (username: string, role: UserRole) => {
+    setUser({ username, ip, role });
     setCurrentStep('SETUP');
   };
 

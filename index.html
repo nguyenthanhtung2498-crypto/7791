@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="vi">
   <head>
@@ -8,6 +9,19 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- Mammoth.js for docx to text conversion -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+    <!-- MathJax for LaTeX rendering -->
+    <script>
+      window.MathJax = {
+        tex: {
+          inlineMath: [['$', '$']],
+          displayMath: [['$$', '$$']]
+        },
+        svg: {
+          fontCache: 'global'
+        }
+      };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <style>
       body {
         font-family: 'Inter', sans-serif;
@@ -29,10 +43,40 @@
         animation: marquee 30s linear infinite;
         padding-left: 20px;
       }
+      
+      /* Paper simulation styles */
+      .paper-view {
+        background: white;
+        box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        padding: 2cm;
+        min-height: 29.7cm;
+        width: 21cm;
+        margin: 0 auto;
+        color: black;
+        line-height: 1.5;
+        font-family: "Times New Roman", Times, serif;
+      }
+      .paper-view h1, .paper-view h2, .paper-view h3 {
+        font-family: "Times New Roman", Times, serif;
+      }
     </style>
-  </head>
+    <script>
+      window.process = { env: { API_KEY: '' } };
+    </script>
+  <script type="importmap">
+{
+  "imports": {
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "lucide-react": "https://esm.sh/lucide-react@^0.562.0",
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "react": "https://esm.sh/react@^19.2.3",
+    "@google/genai": "https://esm.sh/@google/genai@^1.37.0"
+  }
+}
+</script>
+</head>
   <body>
     <div id="root"></div>
-    <script type="module" src="/index.tsx"></script>
+    <script type="module" src="./index.tsx"></script>
   </body>
 </html>

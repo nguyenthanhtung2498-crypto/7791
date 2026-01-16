@@ -8,23 +8,46 @@ export interface Lesson {
   selected: boolean;
 }
 
+export interface QuestionLevel {
+  recognition: number;
+  understanding: number;
+  application: number;
+}
+
 export interface MatrixRow {
   id: string;
   topic: string;
   unit: string;
-  levels: {
-    recognition: number;
-    understanding: number;
-    application: number;
-    highApplication: number;
-  };
-  totalQuestions: number;
-  score: number;
+  mcq: QuestionLevel;
+  tf: QuestionLevel;
+  short: QuestionLevel;
+  essay: QuestionLevel;
+  totalKnow: number;
+  totalUnderstand: number;
+  totalApply: number;
+  percentage: number;
 }
+
+export type QuestionType = 'MCQ' | 'TF' | 'SHORT' | 'ESSAY';
+export type Level = 'NB' | 'TH' | 'VD' | 'VDC';
+
+export interface Question {
+  id: string;
+  unit: string;
+  type: QuestionType;
+  level: Level;
+  content: string;
+  options?: string[]; // Cho MCQ
+  answer: any; // Chuỗi cho MCQ/Short, Array Boolean cho TF, Chuỗi cho Essay
+  explanation?: string;
+}
+
+export type UserRole = 'admin' | 'teacher';
 
 export interface User {
   username: string;
   ip: string;
+  role: UserRole;
 }
 
 export interface SetupInfo {
@@ -49,9 +72,11 @@ export interface SetupInfo {
   percentKnow?: number;
   percentUnderstand?: number;
   percentApply?: number;
+  syllabusText?: string;
+  requirementsText?: string;
 }
 
-export type AppStep = 'LOGIN' | 'SETUP' | 'CONFIG' | 'MATRIX';
+export type AppStep = 'LOGIN' | 'SETUP' | 'CONFIG' | 'MATRIX' | 'SPECIFICATION' | 'EXAM' | 'PREVIEW';
 
 export const SUBJECTS = [
   'KHTN', 'TOÁN', 'NGỮ VĂN', 'TIẾNG ANH', 'GDCD', 'LS-ĐL', 'CÔNG NGHỆ'
