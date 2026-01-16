@@ -1,9 +1,8 @@
 
 import React, { useState } from 'react';
 import { SUBJECTS, GRADES, EXAM_TYPES, Lesson } from '../types';
-import { FileUp, Search, CheckCircle2, Loader2, Sparkles, ChevronRight } from 'lucide-react';
-// @google/genai guidelines followed for initialization and content generation
-import { GoogleGenAI, Type } from '@google/genai';
+import { FileUp, CheckCircle2, Loader2, Sparkles, ChevronRight } from 'lucide-react';
+import { geminiService } from '../services/gemini';
 
 interface SetupStepProps {
   onComplete: (lessons: Lesson[], info: any) => void;
@@ -19,7 +18,11 @@ const SetupStep: React.FC<SetupStepProps> = ({ onComplete }) => {
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (!file) return;
+    if (!file || !subject || !grade) {
+      if (!subject || !grade) alert("Vui lòng chọn Môn và Khối trước khi tải file.");
+      return;
+    }
+    
     setFileName(file.name);
     setIsAnalyzing(true);
 
@@ -29,46 +32,10 @@ const SetupStep: React.FC<SetupStepProps> = ({ onComplete }) => {
       const result = await window.mammoth.extractRawText({ arrayBuffer });
       const text = result.value;
 
-      // Fix: Follow Google GenAI SDK guidelines for initialization
-      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-      const response = await ai.models.generateContent({
-        model: 'gemini-3-flash-preview',
-        contents: `Dưới đây là nội dung Phụ lục III kế hoạch dạy học môn ${subject} khối ${grade}. 
-        Hãy phân tích nội dung này và trích xuất danh sách các bài học.
-        Yêu cầu:
-        1. Chỉ lấy các bài học thực tế có kiến thức.
-        2. LOẠI BỎ hoàn toàn các tiết: Ôn tập, Kiểm tra, Đánh giá, Trả bài, Sinh hoạt.
-        3. Định dạng kết quả là JSON array.
-        
-        Nội dung: ${text.substring(0, 8000)}`,
-        config: {
-          responseMimeType: "application/json",
-          responseSchema: {
-            type: Type.ARRAY,
-            items: {
-              type: Type.OBJECT,
-              properties: {
-                topic: { type: Type.STRING, description: "Tên chương hoặc chủ đề chính" },
-                name: { type: Type.STRING, description: "Tên bài học cụ thể" },
-                week: { type: Type.NUMBER, description: "Tuần thứ mấy" },
-                periods: { type: Type.NUMBER, description: "Số tiết" }
-              },
-              required: ["topic", "name", "week", "periods"]
-            }
-          }
-        }
-      });
-
-      const parsedLessons = JSON.parse(response.text || '[]').map((l: any) => ({
-        ...l,
-        id: Math.random().toString(36).substr(2, 9),
-        selected: true
-      }));
-
+      const parsedLessons = await geminiService.analyzeSyllabus(text, subject, grade);
       setLessons(parsedLessons);
-    } catch (error) {
-      console.error(error);
-      alert("Lỗi khi phân tích file. Vui lòng thử lại.");
+    } catch (error: any) {
+      alert(error.message || "Lỗi khi xử lý tài liệu.");
     } finally {
       setIsAnalyzing(false);
     }
@@ -138,9 +105,9 @@ const SetupStep: React.FC<SetupStepProps> = ({ onComplete }) => {
       </div>
 
       {isAnalyzing && (
-        <div className="flex items-center justify-center gap-3 p-8 bg-white rounded-xl border border-[#e2e8f0]">
+        <div className="flex items-center justify-center gap-3 p-8 bg-white rounded-xl border border-[#e2e8f0] shadow-sm animate-pulse">
           <Loader2 className="animate-spin text-[#0d9488]" />
-          <span className="font-medium text-[#1e293b]">AI đang đọc và phân tích danh mục bài học...</span>
+          <span className="font-medium text-[#1e293b]">AI đang đọc và trích xuất danh sách bài học...</span>
         </div>
       )}
 
@@ -149,9 +116,9 @@ const SetupStep: React.FC<SetupStepProps> = ({ onComplete }) => {
           <div className="flex items-center justify-between">
             <h3 className="text-lg font-bold text-[#1e293b] flex items-center gap-2">
               <Sparkles className="text-amber-500" size={20} />
-              Danh mục bài học phù hợp cho bài thi
+              Danh mục bài học AI đã trích xuất
             </h3>
-            <span className="text-sm text-[#64748b]">Tích chọn các bài sẽ có trong ma trận đề</span>
+            <span className="text-sm text-[#64748b]">Tích chọn các bài sẽ đưa vào ma trận đề</span>
           </div>
 
           <div className="bg-white border border-[#e2e8f0] rounded-xl overflow-hidden shadow-sm">
@@ -195,7 +162,7 @@ const SetupStep: React.FC<SetupStepProps> = ({ onComplete }) => {
               disabled={!canContinue}
               className="px-12 py-4 bg-[#0d9488] hover:bg-[#0f766e] text-white font-bold rounded-xl shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
             >
-              Tiếp tục: Tạo ma trận theo CV 7791
+              Tiếp tục: Cấu hình ma trận
               <ChevronRight size={20} />
             </button>
           </div>
