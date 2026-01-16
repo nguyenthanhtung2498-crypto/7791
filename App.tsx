@@ -13,7 +13,7 @@ const App: React.FC = () => {
     subject: '', 
     grade: '', 
     examType: '',
-    schoolName: 'TRƯỜNG THPT SỐ 3 BẢO THẮNG',
+    schoolName: 'THCS HUỲNH THÚC KHÁNG - HƯNG THỊNH',
     department: 'TỔ CHUYÊN MÔN',
     examName: '',
     schoolYear: 'NĂM HỌC 2026 - 2027',

@@ -15,6 +15,21 @@
         background-color: #f1f5f9;
       }
       .step-active { color: #0d9488; border-bottom: 2px solid #0d9488; }
+      
+      @keyframes marquee {
+        0% { transform: translateX(100%); }
+        100% { transform: translateX(-100%); }
+      }
+      .marquee-container {
+        overflow: hidden;
+        white-space: nowrap;
+        position: relative;
+      }
+      .marquee-content {
+        display: inline-block;
+        animation: marquee 30s linear infinite;
+        padding-left: 20px;
+      }
     </style>
   <script type="importmap">
 {

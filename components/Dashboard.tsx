@@ -81,7 +81,7 @@ const Dashboard: React.FC<DashboardProps> = ({
 
       {/* Main Content */}
       <main className="flex-1 overflow-auto flex flex-col">
-        {/* Top Header info from image */}
+        {/* Top Header info */}
         <div className="bg-[#1e293b] text-white px-8 py-2 flex items-center justify-between text-[11px] font-medium">
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-1">
@@ -92,16 +92,18 @@ const Dashboard: React.FC<DashboardProps> = ({
             </div>
           </div>
           <div className="text-right">
-             <span className="font-bold">Trung tâm Tin học ứng dụng Bai Digitech</span><br/>
-             Liên hệ: 0972.300.864 - Thầy Giới (Hỗ trợ: 0359.399.467 - Thầy Tùng)
+             <span className="font-bold">THCS Huỳnh Thúc Kháng - Hưng Thịnh</span><br/>
+             Liên hệ: Thầy Tùng 0359.399.467
           </div>
         </div>
         
-        <div className="bg-[#fef9c3] py-1 px-8 text-center border-b border-amber-200">
-          <p className="text-xs font-bold text-amber-800 flex items-center justify-center gap-2">
-            <Bell size={12} className="fill-amber-800" />
-            THÔNG BÁO: <span className="font-normal italic">Nên dùng đề cương thầy cô nhé</span>
-          </p>
+        <div className="bg-[#fef9c3] py-1 border-b border-amber-200 marquee-container">
+          <div className="marquee-content">
+            <p className="text-xs font-bold text-amber-800 flex items-center gap-2">
+              <Bell size={12} className="fill-amber-800" />
+              THÔNG BÁO: <span className="font-normal italic uppercase">dung phụ lục III</span>
+            </p>
+          </div>
         </div>
 
         <div className="bg-[#0d9488] text-white px-8 py-2 flex items-center gap-2 text-xs font-medium">
@@ -130,8 +132,8 @@ const Dashboard: React.FC<DashboardProps> = ({
 
         <footer className="px-8 py-4 bg-slate-900 text-slate-400 flex justify-between items-center text-[10px] border-t border-slate-800">
            <div>
-              Trung tâm Tin học ứng dụng Bai Digitech | ĐT: 0972.300.864 - Thầy Giới<br/>
-              © 2026 - Ứng dụng được phát triển bởi Thầy Giới.
+              THCS Huỳnh Thúc Kháng - Hưng Thịnh | ĐT: Thầy Tùng 0359.399.467<br/>
+              © 2026 - Ứng dụng được phát triển bởi Thầy Tùng.
            </div>
            <div className="flex gap-4 uppercase font-bold">
               <button className="hover:text-white flex items-center gap-1" onClick={onLogout}><LogOut size={12}/> Đăng xuất</button>

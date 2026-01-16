@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { User as UserIcon, Lock, AlertTriangle } from 'lucide-react';
+import { User as UserIcon, Lock, AlertTriangle, AlertCircle } from 'lucide-react';
 
 interface LoginProps {
   ip: string;
@@ -8,13 +8,16 @@ interface LoginProps {
 }
 
 const Login: React.FC<LoginProps> = ({ ip, onLogin }) => {
-  const [username, setUsername] = useState('admin');
-  const [password, setPassword] = useState('admin123');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (username && password) {
+    if (username === 'admin' && password === 'admin123') {
       onLogin(username);
+    } else {
+      setError('Tên đăng nhập hoặc mật khẩu không chính xác!');
     }
   };
 
@@ -32,6 +35,13 @@ const Login: React.FC<LoginProps> = ({ ip, onLogin }) => {
 
       <div className="bg-white p-8 rounded-xl shadow-lg w-full max-w-md border border-[#e2e8f0]">
         <form onSubmit={handleSubmit} className="space-y-6">
+          {error && (
+            <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg text-sm flex items-center gap-2 animate-pulse">
+              <AlertCircle size={18} />
+              {error}
+            </div>
+          )}
+
           <div className="space-y-2">
             <label className="text-sm font-medium text-[#475569]">Tên đăng nhập</label>
             <div className="relative">
@@ -41,9 +51,13 @@ const Login: React.FC<LoginProps> = ({ ip, onLogin }) => {
               <input
                 type="text"
                 value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                onChange={(e) => {
+                  setUsername(e.target.value);
+                  setError('');
+                }}
                 className="w-full bg-[#f1f5f9] border-none rounded-lg py-3 pl-10 pr-4 focus:ring-2 focus:ring-[#0d9488] outline-none text-[#1e293b]"
                 placeholder="Nhập tên đăng nhập"
+                required
               />
             </div>
           </div>
@@ -57,9 +71,13 @@ const Login: React.FC<LoginProps> = ({ ip, onLogin }) => {
               <input
                 type="password"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  setError('');
+                }}
                 className="w-full bg-[#f1f5f9] border-none rounded-lg py-3 pl-10 pr-4 focus:ring-2 focus:ring-[#0d9488] outline-none text-[#1e293b]"
                 placeholder="Nhập mật khẩu"
+                required
               />
             </div>
           </div>
@@ -89,13 +107,13 @@ const Login: React.FC<LoginProps> = ({ ip, onLogin }) => {
 
         <div className="mt-8 flex items-center gap-2">
           <div className="h-px bg-[#e2e8f0] flex-1"></div>
-          <span className="text-xs text-[#94a3b8] font-medium whitespace-nowrap">Trung tâm Tin học ứng dụng Bai Digitech</span>
+          <span className="text-xs text-[#94a3b8] font-medium whitespace-nowrap">THCS Huỳnh Thúc Kháng - Hưng Thịnh</span>
           <div className="h-px bg-[#e2e8f0] flex-1"></div>
         </div>
 
         <div className="mt-4 text-center">
           <p className="text-xs text-[#94a3b8]">
-            Liên hệ: <span className="text-[#64748b]">0359.399.467</span> - Thầy Tùng
+            Liên hệ: <span className="text-[#64748b]">Thầy Tùng 0359.399.467</span>
           </p>
         </div>
       </div>
